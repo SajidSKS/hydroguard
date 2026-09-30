@@ -1,0 +1,582 @@
+/* ═══════════════════════════════════════════════════════════
+   HydroGuard Dashboard — Windows XP Luna Theme
+   Authentic XP: #ECE9D8 panels, #0A246A/#3169C6 title bars,
+   Tahoma typography, classic beveled controls
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── TOKENS ── */
+:root {
+  /* XP Luna palette */
+  --xp-bg:            #3A6EA5;          /* desktop blue */
+  --xp-panel:         #ECE9D8;          /* classic panel */
+  --xp-panel-dark:    #D4D0C8;          /* darker panel */
+  --xp-title-start:   #0A246A;          /* title bar gradient start */
+  --xp-title-end:     #3169C6;          /* title bar gradient end */
+  --xp-title-text:    #FFFFFF;
+  --xp-border-light:  #FFFFFF;
+  --xp-border-mid:    #ACA899;
+  --xp-border-dark:   #716F64;
+  --xp-border-shadow: #808080;
+  --xp-text:          #000000;
+  --xp-text-dim:      #4D4D4D;
+  --xp-input-bg:      #FFFFFF;
+  --xp-btn-face:      #ECE9D8;
+
+  /* Status colours — muted, professional */
+  --status-ok:        #008000;           /* Windows green */
+  --status-ok-bg:     #D5F5D5;
+  --status-warn:      #996600;           /* dark amber */
+  --status-warn-bg:   #FFF3CD;
+  --status-fault:     #CC0000;           /* Windows red */
+  --status-fault-bg:  #FDDEDE;
+
+  /* Sizing */
+  --header-h:   32px;
+  --footer-h:   22px;
+  --gap:        4px;
+  --radius:     3px;
+  --title-h:    22px;
+
+  /* Typography */
+  --font:       'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-mono:  Consolas, 'Courier New', monospace;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--xp-bg);
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--xp-text);
+  -webkit-font-smoothing: auto;
+}
+
+/* ═══════════════ HEADER ═══════════════ */
+#header-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  background: linear-gradient(180deg, #1F5FC1 0%, #0A246A 100%);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 8px;
+  z-index: 100;
+  border-bottom: 1px solid #082050;
+}
+
+#header-left {
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+#logo-text {
+  font-size: 14px; font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#header-center {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: #B0C4FF;
+}
+.hdr-label { color: #8AAADA; font-size: 10px; }
+.hdr-val   { color: #FFFFFF; font-family: var(--font-mono); font-size: 11px; }
+.hdr-sep   { color: #4A72A0; }
+
+#header-right {
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Connection LED */
+#conn-wrap { display: flex; align-items: center; gap: 4px; }
+#conn-led {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #808080;
+  border: 1px solid #555;
+}
+#conn-led.online   { background: var(--status-ok); border-color: #006000; }
+#conn-led.error    { background: var(--status-fault); border-color: #900; }
+#conn-label { font-size: 10px; color: #B0C4FF; }
+
+/* ═══════════════ XP BUTTON ═══════════════ */
+.xp-btn {
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 3px 12px;
+  background: linear-gradient(180deg, #F5F3EE 0%, #DEDAD2 48%, #D4D0C8 52%, #CDCAC0 100%);
+  border: 1px solid;
+  border-color: #ACA899 #706F64 #706F64 #ACA899;
+  border-radius: 3px;
+  color: var(--xp-text);
+  cursor: pointer;
+  outline: none;
+  box-shadow: inset 0 1px 0 #fff;
+}
+.xp-btn:hover {
+  background: linear-gradient(180deg, #FAFAF5 0%, #E8E4DC 48%, #DEDAD2 52%, #D4D0C8 100%);
+}
+.xp-btn:active {
+  background: var(--xp-panel-dark);
+  border-color: #706F64 #ACA899 #ACA899 #706F64;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
+  padding: 4px 11px 2px 13px;
+}
+.xp-btn:disabled {
+  color: #ACA899;
+  cursor: default;
+  text-shadow: 1px 1px 0 #fff;
+}
+.xp-btn-primary {
+  background: linear-gradient(180deg, #4B8BDB 0%, #2A63A5 48%, #1F5092 52%, #17427E 100%);
+  color: #fff; border-color: #1A4680 #0A2850 #0A2850 #1A4680;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+.xp-btn-primary:hover {
+  background: linear-gradient(180deg, #5A98E2 0%, #3570B0 100%);
+}
+.xp-btn-danger {
+  background: linear-gradient(180deg, #E07070 0%, #C04040 48%, #B03030 52%, #9A2020 100%);
+  color: #fff; border-color: #9A2020 #700 #700 #9A2020;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* ═══════════════ XP WINDOW / PANEL ═══════════════ */
+.xp-window {
+  background: var(--xp-panel);
+  border: 1px solid;
+  border-color: var(--xp-border-light) var(--xp-border-dark) var(--xp-border-dark) var(--xp-border-light);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+.xp-title-bar {
+  height: var(--title-h);
+  background: linear-gradient(180deg, #0997FF 0%, #0A246A 6%, #3169C6 22%, #4490E4 48%, #3169C6 78%, #0A246A 96%, #0053BF 100%);
+  color: var(--xp-title-text);
+  font-size: 11px; font-weight: 700;
+  padding: 0 8px;
+  display: flex; align-items: center;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  user-select: none;
+}
+.xp-title-bar-error {
+  background: linear-gradient(180deg, #FF5050 0%, #C02020 6%, #CC3333 22%, #E05050 48%, #CC3333 78%, #AA1515 96%, #BB2020 100%);
+}
+
+.xp-window-body {
+  padding: 10px;
+}
+
+/* ═══════════════ XP INPUT ═══════════════ */
+.xp-input {
+  font-family: var(--font);
+  font-size: 12px;
+  background: var(--xp-input-bg);
+  color: var(--xp-text);
+  border: 1px solid;
+  border-color: #7F9DB9 #F0F0F0 #F0F0F0 #7F9DB9;
+  padding: 2px 4px;
+  border-radius: 0;
+  outline: none;
+  width: 100%;
+  box-shadow: inset 1px 1px 1px rgba(0,0,0,0.1);
+}
+.xp-input:focus { border-color: #0055CC; }
+
+/* ═══════════════ SETTINGS PANEL ═══════════════ */
+#settings-panel {
+  position: fixed;
+  top: var(--header-h); right: 4px;
+  width: min(310px, 92vw);
+  max-height: calc(100vh - var(--header-h) - 10px);
+  overflow-y: auto;
+  z-index: 200;
+}
+#settings-panel.hidden { display: none; }
+
+.form-row {
+  display: grid; grid-template-columns: 100px 1fr;
+  align-items: center; gap: 4px;
+  margin-bottom: 5px;
+  font-size: 11px; color: var(--xp-text);
+}
+.form-row label { font-weight: 600; }
+.form-actions { display: flex; gap: 4px; margin-top: 8px; }
+.xp-hr { border: none; border-top: 1px solid var(--xp-border-mid); margin: 8px 0; }
+.xp-checkbox-wrap {
+  display: flex; align-items: center; gap: 4px; font-size: 11px; cursor: pointer;
+}
+
+/* ═══════════════ MAIN GRID ═══════════════ */
+#main-grid {
+  position: fixed;
+  top: var(--header-h);
+  bottom: var(--footer-h);
+  left: 0; right: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--gap);
+  padding: var(--gap);
+  overflow: hidden;
+}
+
+/* Column layouts */
+#col-sensors, #col-center, #col-controls {
+  display: flex; flex-direction: column;
+  gap: var(--gap);
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ═══════════════ SENSOR PANELS ═══════════════ */
+.sensor-panel { flex: 1; min-height: 0; }
+
+.sensor-body {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 8px 10px;
+  gap: 6px;
+  min-height: 0;
+}
+
+/* Reading row */
+.reading-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+.reading-value {
+  font-family: var(--font-mono);
+  font-size: clamp(22px, 3.5vw, 36px);
+  font-weight: 700;
+  color: var(--xp-text);
+  line-height: 1;
+}
+.reading-unit {
+  font-family: var(--font);
+  font-size: clamp(13px, 1.8vw, 18px);
+  font-weight: 700;
+  color: var(--xp-title-end);
+  letter-spacing: 0.04em;
+}
+
+/* Value colours */
+.reading-value.warn  { color: var(--status-warn); }
+.reading-value.fault { color: var(--status-fault); }
+
+/* Gauge */
+.gauge-row { width: 100%; }
+.gauge-track {
+  width: 100%; height: 12px;
+  background: #FFFFFF;
+  border: 1px solid;
+  border-color: #808080 #DFDFDF #DFDFDF #808080;
+  overflow: hidden;
+}
+.gauge-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(180deg, #60C060, #008000);
+  transition: width 0.5s ease, background 0.3s;
+}
+.gauge-fill.warn  { background: linear-gradient(180deg, #F0C040, #C09000); }
+.gauge-fill.fault { background: linear-gradient(180deg, #E06060, #CC0000); }
+
+.gauge-labels {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--xp-text-dim);
+  margin-top: 1px;
+}
+
+/* Status row */
+.status-row {
+  display: flex; align-items: center; gap: 6px;
+}
+.status-label { font-size: 11px; color: var(--xp-text-dim); }
+.status-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 1px 8px;
+  border: 1px solid;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+}
+.badge-normal { background: var(--status-ok-bg); color: var(--status-ok); border-color: #80C080; }
+.badge-warn   { background: var(--status-warn-bg); color: var(--status-warn); border-color: #D4A800; }
+.badge-fault  { background: var(--status-fault-bg); color: var(--status-fault); border-color: #E08080; }
+
+/* Sensor card border change on status */
+.sensor-panel.s-warning { border-left: 3px solid var(--status-warn); }
+.sensor-panel.s-fault   { border-left: 3px solid var(--status-fault); }
+.sensor-panel.s-normal  { border-left: 3px solid var(--status-ok); }
+
+/* ═══════════════ CENTER COLUMN ═══════════════ */
+
+/* STATE PANEL */
+#state-panel { flex: 1; min-height: 0; }
+.state-body {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 8px; gap: 4px; min-height: 0;
+}
+.state-text {
+  font-size: clamp(22px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.state-normal  { color: var(--status-ok); }
+.state-warning { color: var(--status-warn); }
+.state-fault   { color: var(--status-fault); animation: fault-blink 1s step-end infinite; }
+
+@keyframes fault-blink {
+  50% { opacity: 0.4; }
+}
+
+.state-subtitle {
+  font-size: 11px;
+  color: var(--xp-text-dim);
+}
+.fault-chips { display: flex; gap: 4px; margin-top: 4px; }
+.fault-chips.hidden { display: none; }
+.fault-chip {
+  font-size: 9px; font-weight: 700;
+  padding: 1px 6px; border-radius: 2px;
+  background: var(--xp-panel-dark);
+  color: var(--xp-border-mid);
+  border: 1px solid var(--xp-border-mid);
+}
+.fault-chip.active {
+  background: var(--status-fault-bg);
+  color: var(--status-fault);
+  border-color: var(--status-fault);
+}
+
+/* VALVE PANEL */
+#valve-panel { flex: 1; min-height: 0; }
+.valve-body {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 6px; gap: 4px; min-height: 0;
+}
+#valve-visual {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  min-height: 0; width: 100%;
+}
+#valve-svg {
+  width: 100%; height: 100%;
+  max-width: 80px; max-height: 80px;
+}
+
+/* Gate rotation */
+#valve-gate {
+  transition: transform 0.6s ease;
+  transform-origin: 50px 50px;
+}
+.valve-closed #valve-gate { transform: rotate(90deg); }
+.valve-closed #valve-gate-rect { fill: var(--status-fault); }
+
+.valve-label {
+  font-size: clamp(12px, 1.6vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+.valve-is-open   { color: var(--status-ok); }
+.valve-is-closed { color: var(--status-fault); }
+
+/* LOG PANEL */
+#log-panel { flex: 0 0 auto; max-height: 80px; }
+.log-body {
+  flex: 1; overflow: hidden;
+  padding: 3px 6px;
+  display: flex; flex-direction: column;
+  justify-content: flex-end; gap: 1px;
+  background: #fff;
+  border: 1px inset;
+}
+.log-entry {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.log-info  { color: var(--xp-text-dim); }
+.log-ok    { color: var(--status-ok); }
+.log-warn  { color: var(--status-warn); }
+.log-error { color: var(--status-fault); }
+
+/* ═══════════════ RIGHT: CONTROLS ═══════════════ */
+
+/* MODE PANEL */
+#mode-panel { flex: 0 0 auto; }
+.mode-body { padding: 8px; }
+.mode-buttons { display: flex; gap: 4px; }
+.mode-btn {
+  flex: 1;
+  font-size: 12px; font-weight: 700;
+  padding: 6px 8px;
+  letter-spacing: 0.04em;
+}
+.mode-btn.mode-active {
+  background: linear-gradient(180deg, #4B8BDB 0%, #1F5092 100%) !important;
+  color: #fff !important;
+  border-color: #0A2850 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+#btn-manual.mode-active {
+  background: linear-gradient(180deg, #E0A020 0%, #B07800 100%) !important;
+  border-color: #806000 !important;
+}
+.mode-status {
+  font-size: 10px;
+  color: var(--xp-text-dim);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* VALVE CONTROL */
+#valve-ctrl-panel { flex: 0 0 auto; }
+.valve-ctrl-body { padding: 8px; }
+.manual-warn {
+  font-size: 10px;
+  color: var(--status-warn);
+  background: var(--status-warn-bg);
+  padding: 3px 6px;
+  border: 1px solid #D4A800;
+  border-radius: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.manual-warn.hidden { display: none; }
+.valve-buttons { display: flex; gap: 4px; }
+.valve-btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.valve-btn-open {
+  background: linear-gradient(180deg, #70C070 0%, #408040 100%);
+  color: #fff; border-color: #306030 #206020 #206020 #306030;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+.valve-btn-open:hover:not(:disabled) {
+  background: linear-gradient(180deg, #80D080 0%, #509050 100%);
+}
+.valve-btn-close {
+  background: linear-gradient(180deg, #D06060 0%, #A02020 100%);
+  color: #fff; border-color: #802020 #600 #600 #802020;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+.valve-btn-close:hover:not(:disabled) {
+  background: linear-gradient(180deg, #E07070 0%, #B03030 100%);
+}
+
+/* DEVICE INFO */
+#device-panel { flex: 1; min-height: 0; }
+.device-body { padding: 6px 8px; }
+.info-table { width: 100%; border-collapse: collapse; }
+.info-table td { padding: 2px 4px; font-size: 11px; }
+.info-label { color: var(--xp-text-dim); font-weight: 600; width: 55px; white-space: nowrap; }
+.info-value { font-family: var(--font-mono); font-size: 10px; color: var(--xp-text); word-break: break-all; }
+
+/* ═══════════════ FOOTER ═══════════════ */
+#status-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--footer-h);
+  background: var(--xp-panel);
+  border-top: 1px solid;
+  border-color: var(--xp-border-light);
+  box-shadow: inset 0 1px 0 #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 8px;
+  font-size: 10px; color: var(--xp-text-dim);
+}
+#sb-conn-text.online { color: var(--status-ok); font-weight: 600; }
+#sb-conn-text.error  { color: var(--status-fault); font-weight: 600; }
+
+/* ═══════════════ ALARM DIALOG ═══════════════ */
+#alarm-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+}
+#alarm-overlay.hidden { display: none; }
+#alarm-dialog {
+  width: min(340px, 90vw);
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+.alarm-body {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px;
+}
+.alarm-icon {
+  font-size: 32px; color: var(--status-warn);
+  flex-shrink: 0;
+}
+#alarm-text { font-size: 12px; color: var(--xp-text); line-height: 1.5; }
+.alarm-actions {
+  display: flex; justify-content: center;
+  padding: 0 14px 12px;
+}
+.alarm-actions .xp-btn { min-width: 80px; }
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+
+/* Tablet */
+@media (max-width: 900px) {
+  :root { --header-h: 30px; --footer-h: 20px; }
+  #main-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "sensors center" "controls center";
+  }
+  #col-sensors  { grid-area: sensors; }
+  #col-center   { grid-area: center; }
+  #col-controls { grid-area: controls; }
+  .reading-value { font-size: clamp(18px, 4vw, 28px); }
+  .reading-unit  { font-size: clamp(11px, 1.6vw, 15px); }
+}
+
+/* Mobile portrait */
+@media (max-width: 600px) {
+  :root { --header-h: 30px; --footer-h: 18px; --gap: 3px; }
+  #main-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "center" "sensors" "controls";
+    overflow-y: auto;
+  }
+  #col-center   { grid-area: center; flex-direction: row; flex-wrap: wrap; }
+  #state-panel  { flex: 1 1 55%; min-width: 140px; }
+  #valve-panel  { flex: 1 1 40%; min-width: 100px; }
+  #log-panel    { flex: 1 1 100%; max-height: 55px; }
+  #col-sensors  { grid-area: sensors; flex-direction: row; }
+  .sensor-panel { min-width: 120px; flex: 1; }
+  #col-controls { grid-area: controls; flex-direction: row; flex-wrap: wrap; }
+  #mode-panel        { flex: 1 1 100%; }
+  #valve-ctrl-panel  { flex: 1 1 100%; }
+  #device-panel      { flex: 1 1 100%; }
+  .valve-buttons     { flex-direction: row; }
+
+  #header-center { display: none; }
+  .reading-value { font-size: clamp(16px, 5vw, 24px); }
+  .state-text    { font-size: clamp(18px, 6vw, 28px); }
+}
+
+/* Landscape mobile */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 450px) {
+  #main-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "sensors center controls";
+  }
+}

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="HydroGuard Dashboard — Real-time water quality monitoring and valve control via MQTT." />
+  <title>HydroGuard — Water Quality Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ HEADER / TITLE BAR ═══════════════ -->
+  <header id="header-bar">
+    <div id="header-left">
+      <div id="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 1C10 1 3 7 3 12a7 7 0 0014 0C17 7 10 1 10 1z" fill="#3169C6"/>
+          <path d="M10 5C10 5 6 9 6 12a4 4 0 008 0C14 9 10 5 10 5z" fill="#4A8CDE"/>
+        </svg>
+      </div>
+      <span id="logo-text">HydroGuard</span>
+    </div>
+    <div id="header-center">
+      <span class="hdr-item"><span class="hdr-label">SYS TIME</span> <span id="sys-time" class="hdr-val">--:--:--</span></span>
+      <span class="hdr-sep">|</span>
+      <span class="hdr-item"><span class="hdr-label">LAST MSG</span> <span id="last-msg-time" class="hdr-val">--:--:--</span></span>
+      <span class="hdr-sep">|</span>
+      <span class="hdr-item"><span class="hdr-label">MSGS</span> <span id="di-msgs" class="hdr-val">0</span></span>
+    </div>
+    <div id="header-right">
+      <div id="conn-wrap">
+        <div id="conn-led"></div>
+        <span id="conn-label">Disconnected</span>
+      </div>
+      <button id="settings-btn" class="xp-btn" onclick="toggleSettings()">⚙ Settings</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════ SETTINGS DROPDOWN ═══════════════ -->
+  <div id="settings-panel" class="xp-window hidden">
+    <div class="xp-title-bar">MQTT Connection Settings</div>
+    <div class="xp-window-body">
+      <div class="form-row">
+        <label>Broker Host:</label>
+        <input id="cfg-host" class="xp-input" type="text" value="rb12f81f.ala.eu-central-1.emqxsl.com" />
+      </div>
+      <div class="form-row">
+        <label>WSS Port:</label>
+        <input id="cfg-port" class="xp-input" type="number" value="8084" />
+      </div>
+      <div class="form-row">
+        <label>Username:</label>
+        <input id="cfg-user" class="xp-input" type="text" placeholder="from Access Control" />
+      </div>
+      <div class="form-row">
+        <label>Password:</label>
+        <input id="cfg-pass" class="xp-input" type="password" placeholder="from Access Control" />
+      </div>
+      <div class="form-row">
+        <label>Telemetry Topic:</label>
+        <input id="cfg-topic-tel" class="xp-input" type="text" value="hydroguard/telemetry" />
+      </div>
+      <div class="form-row">
+        <label>Control Topic:</label>
+        <input id="cfg-topic-ctrl" class="xp-input" type="text" value="hydroguard/control" />
+      </div>
+      <div class="form-row">
+        <label>Device ID:</label>
+        <input id="cfg-device" class="xp-input" type="text" value="esp32-hydroguard-01" />
+      </div>
+      <div class="form-actions">
+        <button class="xp-btn xp-btn-primary" onclick="mqttConnect()">Connect</button>
+        <button class="xp-btn xp-btn-danger" onclick="mqttDisconnect()">Disconnect</button>
+        <button class="xp-btn" onclick="toggleSettings()">Close</button>
+      </div>
+      <hr class="xp-hr" />
+      <div class="form-row">
+        <label>Simulation Mode:</label>
+        <label class="xp-checkbox-wrap">
+          <input type="checkbox" id="sim-toggle" onchange="toggleSimulation(this.checked)" />
+          <span>Enable demo data</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MAIN 3-COLUMN LAYOUT ═══════════════ -->
+  <main id="main-grid">
+
+    <!-- ─── LEFT: SENSOR PANELS ─── -->
+    <section id="col-sensors">
+
+      <!-- TURBIDITY -->
+      <div class="xp-window sensor-panel" id="card-turbidity">
+        <div class="xp-title-bar">Turbidity Sensor</div>
+        <div class="sensor-body">
+          <div class="reading-row">
+            <span class="reading-value" id="val-turbidity">--.-</span>
+            <span class="reading-unit">NTU</span>
+          </div>
+          <div class="gauge-row">
+            <div class="gauge-track"><div class="gauge-fill" id="gauge-turbidity"></div></div>
+            <div class="gauge-labels"><span>0</span><span>1</span><span>5</span><span>10</span></div>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Status:</span>
+            <span class="status-badge badge-normal" id="badge-turbidity">NORMAL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TDS -->
+      <div class="xp-window sensor-panel" id="card-tds">
+        <div class="xp-title-bar">TDS Sensor</div>
+        <div class="sensor-body">
+          <div class="reading-row">
+            <span class="reading-value" id="val-tds">---</span>
+            <span class="reading-unit">ppm</span>
+          </div>
+          <div class="gauge-row">
+            <div class="gauge-track"><div class="gauge-fill" id="gauge-tds"></div></div>
+            <div class="gauge-labels"><span>0</span><span>300</span><span>500</span><span>1000</span></div>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Status:</span>
+            <span class="status-badge badge-normal" id="badge-tds">NORMAL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- pH -->
+      <div class="xp-window sensor-panel" id="card-ph">
+        <div class="xp-title-bar">pH Sensor</div>
+        <div class="sensor-body">
+          <div class="reading-row">
+            <span class="reading-value" id="val-ph">--.--</span>
+            <span class="reading-unit">pH</span>
+          </div>
+          <div class="gauge-row">
+            <div class="gauge-track"><div class="gauge-fill" id="gauge-ph"></div></div>
+            <div class="gauge-labels"><span>0</span><span>6.5</span><span>8.5</span><span>14</span></div>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Status:</span>
+            <span class="status-badge badge-normal" id="badge-ph">NORMAL</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ─── CENTER: STATE + VALVE + LOG ─── -->
+    <section id="col-center">
+
+      <!-- SYSTEM STATE -->
+      <div class="xp-window" id="state-panel">
+        <div class="xp-title-bar">System State</div>
+        <div class="state-body">
+          <div id="state-display" class="state-text state-normal">NORMAL</div>
+          <div id="state-sub" class="state-subtitle">All parameters within safe limits</div>
+          <div id="fault-indicators" class="fault-chips hidden">
+            <span class="fault-chip" id="fc-turbidity">TURB</span>
+            <span class="fault-chip" id="fc-tds">TDS</span>
+            <span class="fault-chip" id="fc-ph">pH</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VALVE STATUS -->
+      <div class="xp-window" id="valve-panel">
+        <div class="xp-title-bar">Valve Status</div>
+        <div class="valve-body">
+          <div id="valve-visual">
+            <svg id="valve-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect x="42" y="2" width="16" height="22" rx="2" fill="#7F7F7F" stroke="#555" stroke-width="1"/>
+              <rect x="42" y="76" width="16" height="22" rx="2" fill="#7F7F7F" stroke="#555" stroke-width="1"/>
+              <circle cx="50" cy="50" r="26" fill="#D4D0C8" stroke="#808080" stroke-width="2"/>
+              <circle cx="50" cy="50" r="20" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+              <g id="valve-gate">
+                <rect x="46" y="24" width="8" height="52" rx="2" id="valve-gate-rect" fill="#3169C6"/>
+              </g>
+              <circle cx="50" cy="50" r="6" fill="#808080" stroke="#555" stroke-width="1"/>
+              <circle cx="50" cy="50" r="3" fill="#3169C6"/>
+            </svg>
+          </div>
+          <div id="valve-state-label" class="valve-label valve-is-open">● OPEN</div>
+        </div>
+      </div>
+
+      <!-- LOG -->
+      <div class="xp-window" id="log-panel">
+        <div class="xp-title-bar">Event Log</div>
+        <div id="mqtt-log-list" class="log-body">
+          <div class="log-entry log-info">System ready. Open Settings to connect.</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ─── RIGHT: CONTROLS ─── -->
+    <section id="col-controls">
+
+      <!-- MODE -->
+      <div class="xp-window" id="mode-panel">
+        <div class="xp-title-bar">Operation Mode</div>
+        <div class="mode-body">
+          <div class="mode-buttons">
+            <button id="btn-auto" class="xp-btn mode-btn mode-active" onclick="setMode('AUTO')">▶ AUTO</button>
+            <button id="btn-manual" class="xp-btn mode-btn" onclick="setMode('MANUAL')">✎ MANUAL</button>
+          </div>
+          <div id="mode-status-text" class="mode-status">Autonomous control active</div>
+        </div>
+      </div>
+
+      <!-- VALVE CONTROL -->
+      <div class="xp-window" id="valve-ctrl-panel">
+        <div class="xp-title-bar">Valve Control</div>
+        <div class="valve-ctrl-body">
+          <div id="manual-only-warn" class="manual-warn">Switch to MANUAL mode to control valve</div>
+          <div class="valve-buttons">
+            <button id="btn-open-valve" class="xp-btn valve-btn valve-btn-open" onclick="sendValveCmd('OPEN')" disabled>▲ Open Valve</button>
+            <button id="btn-close-valve" class="xp-btn valve-btn valve-btn-close" onclick="sendValveCmd('CLOSE')" disabled>▼ Close Valve</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEVICE INFO -->
+      <div class="xp-window" id="device-panel">
+        <div class="xp-title-bar">Device Information</div>
+        <div class="device-body">
+          <table class="info-table">
+            <tr><td class="info-label">Device:</td><td class="info-value" id="di-device">--</td></tr>
+            <tr><td class="info-label">Broker:</td><td class="info-value" id="di-broker">--</td></tr>
+            <tr><td class="info-label">Topic:</td><td class="info-value" id="di-topic">hydroguard/telemetry</td></tr>
+            <tr><td class="info-label">Uptime:</td><td class="info-value" id="di-uptime">--</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ═══════════════ STATUS BAR ═══════════════ -->
+  <footer id="status-bar">
+    <span id="sb-conn-text">⬤ Disconnected</span>
+    <span id="sb-topic">Topic: hydroguard/telemetry</span>
+  </footer>
+
+  <!-- ═══════════════ ALARM DIALOG ═══════════════ -->
+  <div id="alarm-overlay" class="hidden">
+    <div id="alarm-dialog" class="xp-window">
+      <div class="xp-title-bar xp-title-bar-error">⚠ System Fault Detected</div>
+      <div class="alarm-body">
+        <div class="alarm-icon">⚠</div>
+        <div id="alarm-text">Water quality parameters have exceeded safe limits. Valve may close automatically.</div>
+      </div>
+      <div class="alarm-actions">
+        <button class="xp-btn" onclick="dismissAlarm()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
